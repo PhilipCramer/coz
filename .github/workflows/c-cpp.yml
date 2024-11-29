@@ -1,0 +1,41 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-libelfin:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get dependencies
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: make libdwarf-dev build-essential cmake docutils-common python3 pkg-config libbz2-dev libsqlite3-dev cpack
+    - name: Checkout libelfin
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+        repository: plasma-umass/libelfin
+        ref: master
+    - name: Make libelfin
+      run: |
+        pwd
+        make
+        git status
+  build-coz:
+    needs: build-libelfin
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get dependencies
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: make libdwarf-dev build-essential cmake docutils-common python3 pkg-config libbz2-dev libsqlite3-dev cpack
+    - name: Checkout Coz
+      uses: actions/checkout@v4
+    - name: Make Coz
+      run: |
+        pwd
+        cmake . 
+        make
+        git status
